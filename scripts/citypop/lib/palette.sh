@@ -2,6 +2,14 @@
 # city-blue palette — extracted from upstream citypop-tn src/themes.sh (citypop case only).
 # Source from any widget script: source "$(dirname "$0")/lib/palette.sh"
 
+# Hard fail on bash < 4: every consumer reads THEME[key], which collapses to a
+# single index under bash 3.2 and paints every widget the same color. Apple
+# still ships bash 3.2.57, so this needs `brew install bash` on macOS.
+if (( BASH_VERSINFO[0] < 4 )); then
+  echo "city-blue: palette.sh needs bash 4+ (got ${BASH_VERSION}); run 'brew install bash'" >&2
+  exit 1
+fi
+
 TRANSPARENT_THEME="$(tmux show-option -gv @city-blue_transparent 2>/dev/null)"
 
 declare -A THEME=(

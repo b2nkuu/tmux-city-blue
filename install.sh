@@ -42,6 +42,27 @@ else
   log "tpm already present: ${TPM_DIR}"
 fi
 
+ensure_bash4() {
+  # Widget palette uses associative arrays — bash 3.2 (Apple default) silently
+  # collapses every THEME[key] read to a single value, repainting the status
+  # bar one solid color. brew install bash brings 5.x onto PATH.
+  local bash_major=${BASH_VERSINFO[0]:-0}
+  if (( bash_major >= 4 )); then
+    log "bash ${BASH_VERSION} ok"
+    return
+  fi
+  if [[ "$(uname)" != "Darwin" ]] || ! command -v brew >/dev/null 2>&1; then
+    warn "bash ${BASH_VERSION} is < 4 and brew unavailable — install bash 4+ manually"
+    return
+  fi
+  if brew list bash >/dev/null 2>&1; then
+    log "bash 4+ already brewed (ensure /opt/homebrew/bin is ahead of /bin in PATH)"
+  else
+    log "installing bash (brew)"
+    brew install bash
+  fi
+}
+
 install_fonts() {
   if [[ "$(uname)" != "Darwin" ]]; then
     warn "font install skipped — macOS-only (uses brew cask)"
@@ -76,6 +97,7 @@ CFG
   log "wrote ghostty config -> $cfg"
 }
 
+ensure_bash4
 install_fonts
 setup_ghostty
 
