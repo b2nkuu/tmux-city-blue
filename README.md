@@ -1,8 +1,14 @@
-# tmux-city-blue
+<p align="center">
+  <img src="docs/logo.png" alt="tmux-city-blue logo" width="280">
+</p>
 
-Personal tmux 3.x configuration — modular `conf.d/` layout, custom status-bar
-scripts, and the **city-blue** theme (standalone, native tmux DSL, no theme
-plugin required).
+<h1 align="center">tmux-city-blue</h1>
+
+<p align="center">
+  Personal tmux 3.x configuration — modular <code>conf.d/</code> layout, custom
+  status-bar scripts, and the <strong>city-blue</strong> theme (standalone,
+  native tmux DSL, no theme plugin required).
+</p>
 
 ![city-blue status-line preview](docs/preview.png)
 
