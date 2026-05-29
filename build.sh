@@ -59,7 +59,7 @@ weather_refresh="#($PLUG/tmux-weather/scripts/weather.sh >/dev/null 2>&1)"
 
 # ── Pills ──
 pill() {
-  printf "#[fg=%s,bg=%s,bold] %s #[fg=%s,bg=%s,nobold] %s %s" \
+  printf "#[fg=%s,bg=%s,bold] %s #[fg=%s,bg=%s,nobold]%s %s" \
     "$BLUE" "$BBLACK" "$1" \
     "$FG" "$BBLACK" "$2" "$3"
 }
