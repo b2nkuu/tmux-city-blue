@@ -64,7 +64,8 @@ pill() {
     "$FG" "$BBLACK" "$2" "$3"
 }
 
-FOCUS_PILL=$(pill "$G_FOCUS" "$focus_text" "")
+FOCUS_PILL_INNER=$(pill "$G_FOCUS" "$focus_text" "")
+FOCUS_PILL="#[range=user|focus_reset]${FOCUS_PILL_INNER}#[norange]"
 CPU_PILL=$(pill "$G_CPU" "$cpu_text" "")
 RAM_PILL=$(pill "$G_RAM" "$ram_text" "")
 DISK_PILL=$(pill "$G_DISK" "$disk_text" "")
