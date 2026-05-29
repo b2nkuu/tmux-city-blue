@@ -42,6 +42,43 @@ else
   log "tpm already present: ${TPM_DIR}"
 fi
 
+install_fonts() {
+  if [[ "$(uname)" != "Darwin" ]]; then
+    warn "font install skipped — macOS-only (uses brew cask)"
+    return
+  fi
+  if ! command -v brew >/dev/null 2>&1; then
+    warn "font install skipped — brew not found in PATH"
+    return
+  fi
+  for cask in font-jetbrains-mono-nerd-font font-sarabun; do
+    if brew list --cask "$cask" >/dev/null 2>&1; then
+      log "$cask already installed"
+    else
+      log "installing $cask"
+      brew install --cask "$cask"
+    fi
+  done
+}
+
+setup_ghostty() {
+  local cfg_dir="$HOME/.config/ghostty"
+  local cfg="$cfg_dir/config"
+  mkdir -p "$cfg_dir"
+  backup_if_real "$cfg"
+  cat > "$cfg" <<'CFG'
+font-family = "JetBrainsMono Nerd Font"
+font-family = "Sarabun"
+font-size = 14
+font-feature = +liga
+font-feature = +calt
+CFG
+  log "wrote ghostty config -> $cfg"
+}
+
+install_fonts
+setup_ghostty
+
 log "generating themes/city-blue.conf via build.sh"
 bash "$REPO_DIR/build.sh"
 
@@ -53,6 +90,7 @@ Next steps:
   1. Start or attach tmux:        tmux new -s main
   2. Reload config:               tmux source ~/.tmux.conf
   3. Install plugins (TPM):       press prefix + I  (default prefix: C-b)
+  4. Restart Ghostty so it picks up the new font config.
 
 Notes:
   - Re-run `bash build.sh` after editing the palette or layout in build.sh.
