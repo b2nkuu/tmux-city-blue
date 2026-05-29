@@ -61,6 +61,35 @@ this repo carries no upstream code.
 `tmux-battery`, `tmux-weather`, `tmux-open`, `extrakto`, `tmux-sessionx`,
 `tmux-floax`, `tmux-pomodoro-plus`, `tmux-fzf`, `vim-tmux-navigator`.
 
+## Acknowledgments
+
+Huge thanks to the authors of the projects this config is built on top of —
+this repo is just glue around their work.
+
+**Theme inspiration**
+
+- [janoamaral/tokyo-night-tmux](https://github.com/janoamaral/tokyo-night-tmux) —
+  the rounded-badge status-line layout and widget composition that `city-blue`
+  is modeled after.
+
+**Plugins**
+
+- [tmux-plugins/tpm](https://github.com/tmux-plugins/tpm) — plugin manager
+- [tmux-plugins/tmux-sensible](https://github.com/tmux-plugins/tmux-sensible) — sane defaults
+- [tmux-plugins/tmux-yank](https://github.com/tmux-plugins/tmux-yank) — clipboard yank
+- [tmux-plugins/tmux-resurrect](https://github.com/tmux-plugins/tmux-resurrect) — session save/restore
+- [tmux-plugins/tmux-continuum](https://github.com/tmux-plugins/tmux-continuum) — auto-restore on boot
+- [tmux-plugins/tmux-cpu](https://github.com/tmux-plugins/tmux-cpu) — cpu widget
+- [tmux-plugins/tmux-battery](https://github.com/tmux-plugins/tmux-battery) — battery widget
+- [tmux-plugins/tmux-open](https://github.com/tmux-plugins/tmux-open) — open files/URLs in copy-mode
+- [xamut/tmux-weather](https://github.com/xamut/tmux-weather) — weather widget
+- [laktak/extrakto](https://github.com/laktak/extrakto) — fuzzy scrollback grab
+- [omerxx/tmux-sessionx](https://github.com/omerxx/tmux-sessionx) — fzf session switcher
+- [omerxx/tmux-floax](https://github.com/omerxx/tmux-floax) — floating scratch pane
+- [olimorris/tmux-pomodoro-plus](https://github.com/olimorris/tmux-pomodoro-plus) — pomodoro timer
+- [sainnhe/tmux-fzf](https://github.com/sainnhe/tmux-fzf) — fuzzy command menu
+- [christoomey/vim-tmux-navigator](https://github.com/christoomey/vim-tmux-navigator) — seamless vim/tmux pane nav
+
 ## License
 
 MIT — see `LICENSE`.
