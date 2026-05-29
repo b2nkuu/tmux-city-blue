@@ -4,6 +4,8 @@ Personal tmux 3.x configuration — modular `conf.d/` layout, custom status-bar
 scripts, and the **city-blue** theme (standalone, native tmux DSL, no theme
 plugin required).
 
+![city-blue status-line preview](docs/preview.png)
+
 > Tested on macOS with tmux 3.6b. Some helpers assume `pbcopy`, `osascript`,
 > and a Nerd Font.
 
