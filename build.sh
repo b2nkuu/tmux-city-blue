@@ -96,11 +96,18 @@ set -g status-justify left
 set -g status-left-length  80
 set -g status-right-length 150
 
-set -g status-style          "bg=$BG"
-set -g mode-style            "fg=$BGREEN,bg=$BBLACK"
-set -g message-style         "bg=$BLUE,fg=$BBLACK"
-set -g message-command-style "fg=$BLUE,bg=$BBLACK"
-set -g popup-border-style    "fg=$BLUE"
+set -g status-style              "fg=$FG,bg=$BG"
+set -g status-left-style         "fg=$FG,bg=$BG"
+set -g status-right-style        "fg=$FG,bg=$BG"
+set -g window-status-style          "fg=$FG,bg=$BG"
+set -g window-status-current-style  "fg=$FG,bg=$BG"
+set -g window-status-activity-style "fg=$FG,bg=$BG,none"
+set -g window-status-bell-style     "fg=$FG,bg=$BG,none"
+set -g window-status-last-style     "fg=$FG,bg=$BG"
+set -g mode-style                "fg=$BGREEN,bg=$BBLACK"
+set -g message-style             "bg=$BLUE,fg=$BBLACK"
+set -g message-command-style     "fg=$BLUE,bg=$BBLACK"
+set -g popup-border-style        "fg=$BLUE"
 
 # ── Pane borders ──
 set -g pane-border-lines heavy
