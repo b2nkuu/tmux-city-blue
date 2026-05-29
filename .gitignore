@@ -9,8 +9,5 @@
 *.bak-*
 *.bak.*
 
-# Vendored upstream theme should NOT carry its own .git
-themes/citypop-tn/.git/
-
 # tpm-managed runtime (never check this in)
 plugins/

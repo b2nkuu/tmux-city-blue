@@ -1,8 +1,8 @@
 # tmux-city-blue
 
 Personal tmux 3.x configuration — modular `conf.d/` layout, custom status-bar
-scripts, and a vendored **citypop-tn** theme (fork of
-[janoamaral/tokyo-night-tmux](https://github.com/janoamaral/tokyo-night-tmux)).
+scripts, and the **city-blue** theme (standalone, native tmux DSL, no theme
+plugin required).
 
 > Tested on macOS with tmux 3.6b. Some helpers assume `pbcopy`, `osascript`,
 > and a Nerd Font.
@@ -10,17 +10,15 @@ scripts, and a vendored **citypop-tn** theme (fork of
 ## Layout
 
 ```
-tmux.conf           # entrypoint, source-file's into conf.d/
+tmux.conf           # entrypoint, source-file's into conf.d/ + theme
 conf.d/             # modular configuration
   general.conf      # terminal caps, behavior, status shell
   keybinds.conf     # prefix maps, mouse, popups, menus
-  theme.conf        # citypop-tn theme options
   plugins.conf      # tpm plugin list + per-plugin options
 scripts/            # status-bar widgets (cpu, ram, git, k8s, weather, …)
 themes/
-  citypop-tn/       # vendored theme fork
-  build-citypop.sh  # rebuild theme from upstream
-  citypop-osaka.conf
+  city-blue.conf      # generated status-line (sourced from tmux.conf)
+  build-city-blue.sh  # regenerate city-blue.conf with Nerd Font glyphs
   status-git.sh
 install.sh          # symlink the repo into $HOME (with backups)
 ```
@@ -43,21 +41,26 @@ cd ~/code/tmux-city-blue
 
 After install, open tmux and press **prefix + I** to install plugins.
 
+## Theme
+
+`themes/city-blue.conf` is a self-contained status-line written in native tmux
+DSL — no `tokyo-night-tmux` (or any theme plugin) needed at runtime. To tweak
+glyphs or palette, edit `themes/build-city-blue.sh` and re-run it:
+
+```bash
+bash themes/build-city-blue.sh && tmux source ~/.tmux.conf
+```
+
+The layout was originally inspired by
+[janoamaral/tokyo-night-tmux](https://github.com/janoamaral/tokyo-night-tmux);
+this repo carries no upstream code.
+
 ## Plugins (tpm)
 
 `tmux-sensible`, `tmux-yank`, `tmux-resurrect`, `tmux-continuum`, `tmux-cpu`,
 `tmux-battery`, `tmux-weather`, `tmux-open`, `extrakto`, `tmux-sessionx`,
 `tmux-floax`, `tmux-pomodoro-plus`, `tmux-fzf`, `vim-tmux-navigator`.
 
-The theme is **not** loaded via tpm — it runs after tpm via `run-shell` so the
-citypop palette wins (see `tmux.conf`).
-
-## Credits
-
-- Theme: [janoamaral/tokyo-night-tmux](https://github.com/janoamaral/tokyo-night-tmux)
-  (MIT — see `LICENSE`). `themes/citypop-tn/` is a vendored fork with a custom
-  citypop palette and tweaked widgets.
-
 ## License
 
-MIT — inherited from the vendored theme. See `LICENSE`.
+MIT — see `LICENSE`.
