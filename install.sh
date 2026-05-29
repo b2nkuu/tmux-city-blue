@@ -42,6 +42,9 @@ else
   log "tpm already present: ${TPM_DIR}"
 fi
 
+log "generating themes/city-blue.conf via build.sh"
+bash "$REPO_DIR/build.sh"
+
 cat <<'EOF'
 
 [install] done.
@@ -52,6 +55,7 @@ Next steps:
   3. Install plugins (TPM):       press prefix + I  (default prefix: C-b)
 
 Notes:
+  - Re-run `bash build.sh` after editing the palette or layout in build.sh.
   - Tested on macOS. Some scripts use pbcopy / osascript / battery name
     "InternalBattery-0" — adjust for Linux as needed.
   - Status bar expects a Nerd Font for glyphs.
