@@ -8,6 +8,7 @@ set -euo pipefail
 
 # ── Nerd Font glyphs (UTF-8 hex) ──
 G_FOLDER=$(printf '\xef\x81\xbb')          # U+F07B   folder
+G_BUILDING=$(printf '\xef\x86\xad')        # U+F1AD   building (city-blue logo)
 G_BRANCH=$(printf '\xee\x82\xa0')          # U+E0A0   powerline branch
 G_CLOCK=$(printf '\xef\x80\x97')           # U+F017   clock
 G_SUN=$(printf '\xef\x86\x85')             # U+F185   sun
@@ -73,7 +74,7 @@ BADGE_PREFIX=$(badge "$YEL" "PREFIX")
 BADGE_NORMAL_C="${BADGE_NORMAL//,/#,}"
 BADGE_COPY_C="${BADGE_COPY//,/#,}"
 BADGE_PREFIX_C="${BADGE_PREFIX//,/#,}"
-BADGE_SESSION=$(badge "$PUR" "${G_FOLDER} #S")
+BADGE_SESSION=$(badge "$PUR" "${G_BUILDING} #S")
 BADGE_WEATHER=$(badge "$ORG" "#{weather}")
 BADGE_ONLINE_YES=$(badge "$MNT" "${G_WIFI} ONLINE")
 BADGE_ONLINE_NO=$(badge "$RED" "${G_NO_WIFI} OFFLINE")
