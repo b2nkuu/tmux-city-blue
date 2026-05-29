@@ -73,7 +73,7 @@ of [janoamaral/tokyo-night-tmux](https://github.com/janoamaral/tokyo-night-tmux)
 
 `tmux-sensible`, `tmux-yank`, `tmux-resurrect`, `tmux-continuum`, `tmux-cpu`,
 `tmux-battery`, `tmux-weather`, `tmux-open`, `extrakto`, `tmux-sessionx`,
-`tmux-floax`, `tmux-fzf`, `vim-tmux-navigator`.
+`tmux-floax`, `vim-tmux-navigator`.
 
 ## Acknowledgments
 
@@ -100,7 +100,6 @@ this repo is just glue around their work.
 - [laktak/extrakto](https://github.com/laktak/extrakto) — fuzzy scrollback grab
 - [omerxx/tmux-sessionx](https://github.com/omerxx/tmux-sessionx) — fzf session switcher
 - [omerxx/tmux-floax](https://github.com/omerxx/tmux-floax) — floating scratch pane
-- [sainnhe/tmux-fzf](https://github.com/sainnhe/tmux-fzf) — fuzzy command menu
 - [christoomey/vim-tmux-navigator](https://github.com/christoomey/vim-tmux-navigator) — seamless vim/tmux pane nav
 
 ## License
