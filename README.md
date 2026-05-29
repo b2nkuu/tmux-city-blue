@@ -48,6 +48,8 @@ cd ~/code/tmux-city-blue
   `~/.tmux/themes` with a timestamp suffix
 - replaces them with symlinks into this repo
 - clones `tmux-plugins/tpm` into `~/.tmux/plugins/tpm` if missing
+- runs `build.sh` so `themes/city-blue.conf` is generated with the current
+  machine's `$HOME` baked into widget paths
 - leaves `~/.tmux/plugins/` (managed by tpm) alone
 
 After install, open tmux and press **prefix + I** to install plugins.
@@ -71,7 +73,7 @@ of [janoamaral/tokyo-night-tmux](https://github.com/janoamaral/tokyo-night-tmux)
 
 `tmux-sensible`, `tmux-yank`, `tmux-resurrect`, `tmux-continuum`, `tmux-cpu`,
 `tmux-battery`, `tmux-weather`, `tmux-open`, `extrakto`, `tmux-sessionx`,
-`tmux-floax`, `tmux-pomodoro-plus`, `tmux-fzf`, `vim-tmux-navigator`.
+`tmux-floax`, `tmux-fzf`, `vim-tmux-navigator`.
 
 ## Acknowledgments
 
@@ -98,7 +100,6 @@ this repo is just glue around their work.
 - [laktak/extrakto](https://github.com/laktak/extrakto) — fuzzy scrollback grab
 - [omerxx/tmux-sessionx](https://github.com/omerxx/tmux-sessionx) — fzf session switcher
 - [omerxx/tmux-floax](https://github.com/omerxx/tmux-floax) — floating scratch pane
-- [olimorris/tmux-pomodoro-plus](https://github.com/olimorris/tmux-pomodoro-plus) — pomodoro timer
 - [sainnhe/tmux-fzf](https://github.com/sainnhe/tmux-fzf) — fuzzy command menu
 - [christoomey/vim-tmux-navigator](https://github.com/christoomey/vim-tmux-navigator) — seamless vim/tmux pane nav
 
