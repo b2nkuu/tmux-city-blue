@@ -31,7 +31,7 @@ G_BATT_0=$(printf '\xef\x89\x84')          # U+F244
 PL_RL=$(printf '\xee\x82\xb6')             # U+E0B6
 PL_RR=$(printf '\xee\x82\xb4')             # U+E0B4
 
-OUT="$HOME/.tmux/themes/city-blue.conf"
+OUT="${OUT:-$HOME/.tmux/themes/city-blue.conf}"
 mkdir -p "$(dirname "$OUT")"
 
 # ── Palette (used many places — keep DRY via shell vars) ──
@@ -86,6 +86,9 @@ BADGE_PATH=$(badge "$MNT" "${G_FOLDER} #{b:pane_current_path}")
 BADGE_CPU=$(badge "$RED" "${G_CPU} #($HOME/.tmux/plugins/tmux-cpu/scripts/cpu_percentage.sh)")
 BADGE_CLOCK=$(badge "$CYA" "${G_CLOCK} %H:%M:%S")
 BADGE_DATE=$(badge "$YEL" "%a %d %b")
+
+# Git badge — script self-styles (skips entirely when not in a repo)
+BADGE_GIT="#($HOME/.tmux/scripts/git.sh #{pane_current_path})"
 
 # Window badges
 WIN_INACTIVE_FMT="#[fg=${BG2},bg=${BG0}]${PL_RL}#[bg=${BG2},fg=${FG1}] #I ${G_TAG} #W #[fg=${BG2},bg=${BG0}]${PL_RR}"
@@ -142,7 +145,7 @@ set -g status-right "${BADGE_WEATHER} ${BADGE_BATT} ${BADGE_ONLINE_YES}"
 # ── Row 1: info row ──
 # Plugin format placeholders (#{cpu_*}, #{battery_*}) only get post-processed
 # in status-left/right by tpm plugins. For row 1 we call scripts directly.
-set -g status-format[1] '#[bg=${BG0},fg=${FG1}]#[align=left] ${BADGE_USER} ${BADGE_HOST} ${BADGE_PATH}#[align=right]${BADGE_CPU} ${BADGE_CLOCK} ${BADGE_DATE} '
+set -g status-format[1] '#[bg=${BG0},fg=${FG1}]#[align=left] ${BADGE_USER} ${BADGE_HOST} ${BADGE_PATH} ${BADGE_GIT}#[align=right]${BADGE_CPU} ${BADGE_CLOCK} ${BADGE_DATE} '
 
 # ── Plugin icon overrides ──
 # tmux-battery — city-blue tier glyphs
