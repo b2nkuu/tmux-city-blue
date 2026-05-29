@@ -92,7 +92,7 @@ case "$SYNC_MODE" in
   SYNC_COLOR="${THEME[magenta]}"; SYNC_ICON="󰛀"
   ;;
 *)
-  SYNC_COLOR="${THEME[green]}"; SYNC_ICON=""
+  SYNC_COLOR="${THEME[green]}"; SYNC_ICON=""
   ;;
 esac
 
