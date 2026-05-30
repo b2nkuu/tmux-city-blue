@@ -102,6 +102,10 @@ setup_zsh_tmux() {
   # Inject a per-project `tmux` wrapper into ~/.zshrc: bare `tmux` attaches or
   # creates a session named after the cwd basename, with an isolated socket and
   # tmux-resurrect dir per project.
+  if ! command -v zsh >/dev/null 2>&1; then
+    warn "zsh not found — skipping ~/.zshrc tmux helper"
+    return
+  fi
   local rc="$HOME/.zshrc"
   local begin='# >>> tmux-city-blue per-project tmux >>>'
   local end='# <<< tmux-city-blue per-project tmux <<<'
