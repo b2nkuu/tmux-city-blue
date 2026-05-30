@@ -82,6 +82,53 @@ install_fonts() {
   done
 }
 
+ensure_global_gitignore() {
+  # tmux-resurrect's default save path uses ${RESURRECT_DIR:-...}; if a shell
+  # writes it unexpanded (e.g. inside a repo), git can stage a literal dir of
+  # that name. Add a global ignore so it can never be committed by accident.
+  local ignore_file="${XDG_CONFIG_HOME:-$HOME/.config}/git/ignore"
+  local pattern='${RESURRECT_DIR*'
+  mkdir -p "$(dirname "$ignore_file")"
+  touch "$ignore_file"
+  if grep -qxF "$pattern" "$ignore_file"; then
+    log "global gitignore already has resurrect pattern"
+  else
+    printf '%s\n' "$pattern" >> "$ignore_file"
+    log "added resurrect pattern to $ignore_file"
+  fi
+}
+
+setup_zsh_tmux() {
+  # Inject a per-project `tmux` wrapper into ~/.zshrc: bare `tmux` attaches or
+  # creates a session named after the cwd basename, with an isolated socket and
+  # tmux-resurrect dir per project.
+  local rc="$HOME/.zshrc"
+  local begin='# >>> tmux-city-blue per-project tmux >>>'
+  local end='# <<< tmux-city-blue per-project tmux <<<'
+  if [[ -f "$rc" ]] && grep -qF "$begin" "$rc"; then
+    log "zsh tmux helper already present in $rc"
+    return
+  fi
+  [[ -f "$rc" ]] || touch "$rc"
+  cp "$rc" "${rc}.bak-${STAMP}"
+  cat >> "$rc" <<ZSH
+
+$begin
+tmux() {
+  if [ \$# -gt 0 ]; then
+    command tmux "\$@"
+    return
+  fi
+  local name="\${PWD##*/}"
+  local dir="\$HOME/.local/share/tmux/resurrect/\$name"
+  mkdir -p "\$dir"
+  RESURRECT_DIR="\$dir" command tmux -L "\$name" new-session -A -s "\$name"
+}
+$end
+ZSH
+  log "added tmux helper to $rc (backup: ${rc}.bak-${STAMP})"
+}
+
 setup_ghostty() {
   local cfg_dir="$HOME/.config/ghostty"
   local cfg="$cfg_dir/config"
@@ -99,6 +146,8 @@ CFG
 
 ensure_bash4
 install_fonts
+ensure_global_gitignore
+setup_zsh_tmux
 setup_ghostty
 
 log "generating themes/city-blue.conf via build.sh"
