@@ -1,0 +1,25 @@
+# solo configuration
+version: 1
+
+repo: "b2nkuu/tmux-city-blue"
+
+defaults:
+  inbox_label: "status:inbox"
+  capture_type_guessing: true
+
+trunk:
+  name: "main"
+  max_branch_age_days: 2          # /solo:today warns when an in-progress branch is older
+
+branch:
+  enabled: true
+  pattern: "{type}/{issue}-{slug}"
+  branch_from_trunk: true          # always branch from trunk, not current
+
+note:
+  storage: "comment"
+  decision_prefix: "[decision]"
+
+display:
+  today_suggested_limit: 5
+  date_format: "%Y-%m-%d"
