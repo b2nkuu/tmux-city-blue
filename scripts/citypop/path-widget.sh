@@ -16,7 +16,7 @@ default_path_format="relative"
 PATH_FORMAT="${PATH_FORMAT:-$default_path_format}"
 
 if [[ ${PATH_FORMAT} == "relative" ]]; then
-  current_path="$(echo ${current_path} | sed 's#'"$HOME"'#~#g')"
+  current_path="$(echo "${current_path}" | sed 's#'"$HOME"'#~#g')"
 fi
 
 echo "#[fg=${THEME[blue]},bg=${THEME[bblack]},bold] 󰉋 #[default] ${current_path} "

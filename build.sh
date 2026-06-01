@@ -41,11 +41,11 @@ WIN_STYLE="${WIN_STYLE:-none}"
 ZOOM_STYLE="${ZOOM_STYLE:-dsquare}"
 
 netspeed_cmd="#($WIDGETS/netspeed.sh)"
-git_cmd="#($WIDGETS/git-status.sh #{pane_current_path})"
+git_cmd="#($WIDGETS/git-status.sh \\\"#{pane_current_path}\\\")"
 window_number="#($WIDGETS/custom-number.sh #I $WIN_STYLE)"
 zoom_number="#($WIDGETS/custom-number.sh #P $ZOOM_STYLE)"
 datetime_cmd="#($WIDGETS/datetime-widget.sh)"
-path_cmd="#($WIDGETS/path-widget.sh #{pane_current_path})"
+path_cmd="#($WIDGETS/path-widget.sh \\\"#{pane_current_path}\\\")"
 battery_cmd="#($WIDGETS/battery-widget.sh)"
 hostname_cmd="#($WIDGETS/hostname-widget.sh)"
 
