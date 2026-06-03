@@ -25,6 +25,7 @@ G_PREFIX="󰠠"      # prefix on
 G_PREFIX_DIM="󰤂"  # prefix off
 G_MENU="󰍜"        # menu
 G_FOCUS="󱎫"       # focus stopwatch (count-up since session start)
+G_SNAPSHOT="󰖲"    # snapshots (save/load named pane layouts) — window-restore
 G_CPU="󰍛"         # cpu
 G_RAM="󰘚"         # ram
 G_DISK="󰋊"        # disk
@@ -66,6 +67,7 @@ pill() {
 
 FOCUS_PILL_INNER=$(pill "$G_FOCUS" "$focus_text" "")
 FOCUS_PILL="#[range=user|focus_reset]${FOCUS_PILL_INNER}#[norange]"
+SNAPSHOT_BUTTON="#[range=user|snapshots,fg=$BLUE,bg=$BBLACK,bold] $G_SNAPSHOT #[norange,default]"
 CPU_PILL=$(pill "$G_CPU" "$cpu_text" "")
 RAM_PILL=$(pill "$G_RAM" "$ram_text" "")
 DISK_PILL=$(pill "$G_DISK" "$disk_text" "")
@@ -127,7 +129,7 @@ set -g status-left "${MENU_BUTTON}${SESSION_PILL}"
 set -g status-right "${git_cmd}${RIGHT_TOP}"
 
 # ── Status row 1 (info) ──
-set -g status-format[1] "#[bg=$BG,fg=$FG]${path_cmd}#[align=right,bg=$BG]${RIGHT_BOTTOM}"
+set -g status-format[1] "#[bg=$BG,fg=$FG]${SNAPSHOT_BUTTON}#[bg=$BG,fg=$FG]${path_cmd}#[align=right,bg=$BG]${RIGHT_BOTTOM}"
 EOF
 
 echo "wrote $OUT"
