@@ -40,9 +40,12 @@ CURRENT_WIN=$(tmux display-message -p '#I')
 ACTIVE_PANE=$(tmux display-message -p '#P')
 BASE_CWD=$(tmux display-message -p '#{pane_current_path}')
 
-relaunch() {
+launch_for() {
   case "$1" in
-    nvim|vim|claude|ssh|mosh|mosh-client|lazygit|htop|btop|k9s|lf|yazi|less|man) return 0 ;;
+    nvim|vim|claude|ssh|mosh|mosh-client|lazygit|htop|btop|k9s|lf|yazi|less|man)
+      printf '%s\n' "$1" ;;
+    tmux)
+      printf '%s\n' "$HOME/.tmux/scripts/inner_tmux.sh" ;;
     *) return 1 ;;
   esac
 }
@@ -92,23 +95,23 @@ while IFS="$TAB" read -ra fields; do
         if [ -n "$surviving_pane" ] && [ "$target_w" = "$CURRENT_WIN" ]; then
           tmux respawn-pane -k -c "$BASE_CWD" \
             -t "=$SESSION:$CURRENT_WIN.$surviving_pane" 2>/dev/null || true
-          if relaunch "$p_cmd"; then
+          if cmd_str=$(launch_for "$p_cmd"); then
             tmux send-keys -t "=$SESSION:$CURRENT_WIN.$surviving_pane" \
-              "$p_cmd" C-m
+              "$cmd_str" C-m
           fi
           surviving_pane=""
         else
           first_pane=$(tmux list-panes -t "$target" -F '#{pane_index}' | head -1)
           tmux send-keys -t "$target.$first_pane" "cd ${BASE_CWD@Q} && clear" C-m
-          if relaunch "$p_cmd"; then
-            tmux send-keys -t "$target.$first_pane" "$p_cmd" C-m
+          if cmd_str=$(launch_for "$p_cmd"); then
+            tmux send-keys -t "$target.$first_pane" "$cmd_str" C-m
           fi
         fi
         win_first_pane_done[$saved_w_idx]=1
       else
         tmux split-window -t "$target" -c "$BASE_CWD"
-        if relaunch "$p_cmd"; then
-          tmux send-keys -t "$target" "$p_cmd" C-m
+        if cmd_str=$(launch_for "$p_cmd"); then
+          tmux send-keys -t "$target" "$cmd_str" C-m
         fi
       fi
       ;;

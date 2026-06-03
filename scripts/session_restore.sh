@@ -37,9 +37,13 @@ fi
 [ -f "$FILE" ] || { tmux display-message "󰦛  not found: $FILE"; exit 1; }
 
 # Whitelist of commands worth re-launching on restore.
-relaunch() {
+# Echoes the actual command line to send; returns non-zero to skip.
+launch_for() {
   case "$1" in
-    nvim|vim|claude|ssh|mosh|mosh-client|lazygit|htop|btop|k9s|lf|yazi|less|man) return 0 ;;
+    nvim|vim|claude|ssh|mosh|mosh-client|lazygit|htop|btop|k9s|lf|yazi|less|man)
+      printf '%s\n' "$1" ;;
+    tmux)
+      printf '%s\n' "$HOME/.tmux/scripts/inner_tmux.sh" ;;
     *) return 1 ;;
   esac
 }
@@ -90,15 +94,15 @@ while IFS="$TAB" read -ra fields; do
       if [ -z "${win_first_pane_done[$w_idx]:-}" ]; then
         first_pane=$(tmux list-panes -t "$target" -F '#{pane_index}' | head -1)
         tmux send-keys -t "$target.$first_pane" "cd ${p_path@Q} && clear" C-m
-        if relaunch "$p_cmd"; then
-          tmux send-keys -t "$target.$first_pane" "$p_cmd" C-m
+        if cmd_str=$(launch_for "$p_cmd"); then
+          tmux send-keys -t "$target.$first_pane" "$cmd_str" C-m
         fi
         win_first_pane_done[$w_idx]=1
         pane_ref="$target.$first_pane"
       else
         tmux split-window -t "$target" -c "$p_path"
-        if relaunch "$p_cmd"; then
-          tmux send-keys -t "$target" "$p_cmd" C-m
+        if cmd_str=$(launch_for "$p_cmd"); then
+          tmux send-keys -t "$target" "$cmd_str" C-m
         fi
         pane_ref="$target"
       fi
