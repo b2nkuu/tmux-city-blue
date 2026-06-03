@@ -1,14 +1,17 @@
 #!/usr/bin/env bash
-# tmux-city-blue: restore a saved tmux session snapshot.
+# city-blue: restore a saved tmux session snapshot.
 #
-# Reads $XDG_DATA_HOME/tmux-city-blue/sessions/<name>.tmux files.
+# Reads $XDG_DATA_HOME/city-blue/sessions/<name>.tmux files.
 # If multiple files exist, lets the user pick via fzf popup.
 # If the target session already exists, switches the client to it
 # (does not destroy the live session). Otherwise creates it from scratch.
 
 set -euo pipefail
 
-DATA_DIR="${XDG_DATA_HOME:-$HOME/.local/share}/tmux-city-blue/sessions"
+_XDG="${XDG_DATA_HOME:-$HOME/.local/share}"
+DATA_DIR="$_XDG/city-blue/sessions"
+_LEGACY="$_XDG/tmux-city-blue/sessions"
+[ ! -d "$DATA_DIR" ] && [ -d "$_LEGACY" ] && { mkdir -p "$(dirname "$DATA_DIR")"; mv "$_LEGACY" "$DATA_DIR"; }
 
 shopt -s nullglob
 files=("$DATA_DIR"/*.tmux)
@@ -20,8 +23,8 @@ fi
 if [ ${#files[@]} -eq 1 ]; then
   FILE="${files[0]}"
 else
-  LIST="$(mktemp "${TMPDIR:-/tmp}/tmux-city-blue.list.XXXXXX")"
-  PICK="$(mktemp "${TMPDIR:-/tmp}/tmux-city-blue.pick.XXXXXX")"
+  LIST="$(mktemp "${TMPDIR:-/tmp}/city-blue.list.XXXXXX")"
+  PICK="$(mktemp "${TMPDIR:-/tmp}/city-blue.pick.XXXXXX")"
   trap 'rm -f "$LIST" "$PICK"' EXIT
   printf '%s\n' "${files[@]##*/}" | sed 's/\.tmux$//' > "$LIST"
   tmux display-popup -E -w 60% -h 60% \

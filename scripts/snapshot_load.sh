@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# tmux-city-blue: load a snapshot into the live session.
+# city-blue: load a snapshot into the live session.
 # The snapshot's first window replaces the active window (kills the other
 # panes, respawns the active one, then splits to match). Any further
 # snapshot windows are appended as new windows. All panes use the active
@@ -7,7 +7,10 @@
 
 set -euo pipefail
 
-DATA_DIR="${XDG_DATA_HOME:-$HOME/.local/share}/tmux-city-blue/snapshots"
+_XDG="${XDG_DATA_HOME:-$HOME/.local/share}"
+DATA_DIR="$_XDG/city-blue/snapshots"
+_LEGACY="$_XDG/tmux-city-blue/snapshots"
+[ ! -d "$DATA_DIR" ] && [ -d "$_LEGACY" ] && { mkdir -p "$(dirname "$DATA_DIR")"; mv "$_LEGACY" "$DATA_DIR"; }
 
 shopt -s nullglob
 files=("$DATA_DIR"/*.tmux)
@@ -19,8 +22,8 @@ fi
 if [ ${#files[@]} -eq 1 ]; then
   FILE="${files[0]}"
 else
-  LIST="$(mktemp "${TMPDIR:-/tmp}/tmux-city-blue.list.XXXXXX")"
-  PICK="$(mktemp "${TMPDIR:-/tmp}/tmux-city-blue.pick.XXXXXX")"
+  LIST="$(mktemp "${TMPDIR:-/tmp}/city-blue.list.XXXXXX")"
+  PICK="$(mktemp "${TMPDIR:-/tmp}/city-blue.pick.XXXXXX")"
   trap 'rm -f "$LIST" "$PICK"' EXIT
   printf '%s\n' "${files[@]##*/}" | sed 's/\.tmux$//' > "$LIST"
   tmux display-popup -E -w 60% -h 60% \

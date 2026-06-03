@@ -31,8 +31,12 @@ G_RAM="󰘚"         # ram
 G_DISK="󰋊"        # disk
 
 # ── Widget script paths (resolved at tmux runtime) ──
-WIDGETS="$HOME/.tmux/scripts/citypop"
-PLUG="$HOME/.tmux/plugins"
+# Keep $HOME literal in the emitted conf — tmux runs #(...) via /bin/sh,
+# which expands $HOME per user. Baking an absolute path here would lock
+# the generated conf to the build machine's user (breaks package managers
+# and anyone whose $HOME differs from the builder's).
+WIDGETS='$HOME/.tmux/scripts/citypop'
+PLUG='$HOME/.tmux/plugins'
 
 # ── Command stubs — these stay literal in the conf; tmux runs them every interval ──
 # Read style options at build time (re-run build.sh after changing theme.conf)

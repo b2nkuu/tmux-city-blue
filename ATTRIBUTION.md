@@ -1,11 +1,11 @@
 # Attribution
 
-`tmux-city-blue` is a derivative of two upstream projects.
+`city-blue` is a derivative of two upstream projects.
 
 ## Lineage
 
 ```
-janoamaral/tokyo-night-tmux  →  citypop-tn (private fork)  →  tmux-city-blue
+janoamaral/tokyo-night-tmux  →  citypop-tn (private fork)  →  city-blue
 ```
 
 - **Original:** [janoamaral/tokyo-night-tmux](https://github.com/janoamaral/tokyo-night-tmux) — MIT.

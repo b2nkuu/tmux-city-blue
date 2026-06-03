@@ -1,8 +1,8 @@
 <p align="center">
-  <img src="docs/logo.png" alt="tmux-city-blue logo" width="280">
+  <img src="docs/logo.png" alt="city-blue logo" width="280">
 </p>
 
-<h1 align="center">tmux-city-blue</h1>
+<h1 align="center">city-blue</h1>
 
 <p align="center">
   Personal tmux 3.x configuration — modular <code>conf.d/</code> layout, custom
@@ -37,22 +37,53 @@ ATTRIBUTION.md      # upstream lineage + what was kept/dropped
 ## Install
 
 ```bash
-git clone https://github.com/b2nkuu/tmux-city-blue.git ~/code/tmux-city-blue
-cd ~/code/tmux-city-blue
+git clone https://github.com/b2nkuu/city-blue.git ~/code/city-blue
+cd ~/code/city-blue
 ./install.sh
 ```
 
-`install.sh` is idempotent:
+Default (`--minimal`) is safe and package-manager friendly:
 
 - backs up any existing real `~/.tmux.conf`, `~/.tmux/conf.d`, `~/.tmux/scripts`,
   `~/.tmux/themes` with a timestamp suffix
 - replaces them with symlinks into this repo
 - clones `tmux-plugins/tpm` into `~/.tmux/plugins/tpm` if missing
-- runs `build.sh` so `themes/city-blue.conf` is generated with the current
-  machine's `$HOME` baked into widget paths
+- runs `build.sh` so `themes/city-blue.conf` is regenerated (paths use literal
+  `$HOME`, so the same conf works for any user)
 - leaves `~/.tmux/plugins/` (managed by tpm) alone
+- does **not** touch `~/.zshrc`, `~/.config/ghostty`, fonts, or global gitignore
+  — those are printed as caveats instead
+
+Opt-in flags add the legacy "do everything for me" behaviour:
+
+| Flag | What it does |
+|------|--------------|
+| `--with-zsh`        | append `source share/city-blue.zsh` to `~/.zshrc` |
+| `--with-ghostty`    | overwrite `~/.config/ghostty/config` with recommended settings |
+| `--with-fonts`      | `brew install --cask font-jetbrains-mono-nerd-font font-sarabun` |
+| `--with-bash`       | `brew install bash` (widgets need bash 4+) |
+| `--with-gitignore`  | add tmux-resurrect dir pattern to global gitignore |
+| `--full`            | all of the above |
 
 After install, open tmux and press **prefix + I** to install plugins.
+
+### Per-project tmux wrapper
+
+`share/city-blue.zsh` defines a `tmux` zsh function that, when called with
+no arguments, scopes the tmux **server, session name, and `tmux-resurrect` dir**
+to the current project — so each project keeps its own pane layout. Source it
+from your `~/.zshrc`:
+
+```bash
+source /path/to/city-blue/share/city-blue.zsh
+```
+
+`tmux <args>` still calls the real binary unchanged.
+
+The project key is the **inode of the git root** (falling back to `$PWD`), so
+renaming or moving the folder on the same filesystem does **not** lose the
+saved session state. On first run for a project that used the previous
+basename-keyed wrapper, the old resurrect snapshots are migrated automatically.
 
 ## Theme
 

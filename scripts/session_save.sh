@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
-# tmux-city-blue: snapshot current tmux session to a plain-text file.
+# city-blue: snapshot current tmux session to a plain-text file.
 #
-# Output: $XDG_DATA_HOME/tmux-city-blue/sessions/<session>.tmux
+# Output: $XDG_DATA_HOME/city-blue/sessions/<session>.tmux
 # Format: tab-separated records, one per line.
 #   session<TAB><name>
 #   window<TAB><idx><TAB><name><TAB><active><TAB><layout>
@@ -9,12 +9,15 @@
 
 set -euo pipefail
 
-DATA_DIR="${XDG_DATA_HOME:-$HOME/.local/share}/tmux-city-blue/sessions"
+_XDG="${XDG_DATA_HOME:-$HOME/.local/share}"
+DATA_DIR="$_XDG/city-blue/sessions"
+_LEGACY="$_XDG/tmux-city-blue/sessions"
+[ ! -d "$DATA_DIR" ] && [ -d "$_LEGACY" ] && { mkdir -p "$(dirname "$DATA_DIR")"; mv "$_LEGACY" "$DATA_DIR"; }
 mkdir -p "$DATA_DIR"
 
 SESSION=$(tmux display-message -p '#S')
 OUT="$DATA_DIR/${SESSION}.tmux"
-TMP="$(mktemp "${TMPDIR:-/tmp}/tmux-city-blue.XXXXXX")"
+TMP="$(mktemp "${TMPDIR:-/tmp}/city-blue.XXXXXX")"
 trap 'rm -f "$TMP"' EXIT
 
 TAB=$'\t'

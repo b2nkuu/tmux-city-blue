@@ -1,5 +1,22 @@
 #!/usr/bin/env bash
-# Install tmux-city-blue by symlinking this repo into $HOME.
+# Install city-blue.
+#
+# Default (safe / package-manager friendly):
+#   - symlink tmux.conf, conf.d, scripts, themes into $HOME/.tmux
+#   - clone tpm if missing
+#   - run build.sh
+#   - print caveats for everything else (no edits to ~/.zshrc, ~/.config, etc.)
+#
+# Opt-in flags (legacy "do everything for me" behaviour = --full):
+#   --with-zsh        inject per-project tmux() wrapper into ~/.zshrc
+#   --with-ghostty    overwrite ~/.config/ghostty/config
+#   --with-fonts      brew install JetBrainsMono Nerd Font + Sarabun
+#   --with-bash       brew install bash 4+ if missing
+#   --with-gitignore  add resurrect pattern to global gitignore
+#   --full            all of the above
+#   --minimal         alias for the default (explicit)
+#   -h, --help        show this help
+#
 # Existing real files/dirs are backed up with a timestamp suffix.
 # Existing symlinks are replaced silently.
 
@@ -8,8 +25,33 @@ set -euo pipefail
 REPO_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 STAMP="$(date +%Y%m%d-%H%M%S)"
 
-log()  { printf '\033[1;36m[install]\033[0m %s\n' "$*"; }
-warn() { printf '\033[1;33m[warn]\033[0m %s\n' "$*"; }
+WITH_ZSH=0
+WITH_GHOSTTY=0
+WITH_FONTS=0
+WITH_BASH=0
+WITH_GITIGNORE=0
+
+usage() { sed -n '2,20p' "$0"; }
+
+while [[ $# -gt 0 ]]; do
+  case "$1" in
+    --with-zsh)       WITH_ZSH=1 ;;
+    --with-ghostty)   WITH_GHOSTTY=1 ;;
+    --with-fonts)     WITH_FONTS=1 ;;
+    --with-bash)      WITH_BASH=1 ;;
+    --with-gitignore) WITH_GITIGNORE=1 ;;
+    --full)
+      WITH_ZSH=1; WITH_GHOSTTY=1; WITH_FONTS=1; WITH_BASH=1; WITH_GITIGNORE=1 ;;
+    --minimal) ;;
+    -h|--help) usage; exit 0 ;;
+    *) printf 'unknown flag: %s\n' "$1" >&2; usage; exit 2 ;;
+  esac
+  shift
+done
+
+log()    { printf '\033[1;36m[install]\033[0m %s\n' "$*"; }
+warn()   { printf '\033[1;33m[warn]\033[0m %s\n' "$*"; }
+caveat() { printf '\033[1;35m[caveat]\033[0m %s\n' "$*"; }
 
 backup_if_real() {
   local target="$1"
@@ -27,6 +69,7 @@ link() {
   log "linked ${dst} -> ${src}"
 }
 
+# ── Core install (always runs) ────────────────────────────────────────────
 mkdir -p "$HOME/.tmux"
 
 link "$REPO_DIR/tmux.conf" "$HOME/.tmux.conf"
@@ -42,17 +85,19 @@ else
   log "tpm already present: ${TPM_DIR}"
 fi
 
+log "generating themes/city-blue.conf via build.sh"
+bash "$REPO_DIR/build.sh"
+
+# ── Opt-in side effects ───────────────────────────────────────────────────
+
 ensure_bash4() {
-  # Widget palette uses associative arrays — bash 3.2 (Apple default) silently
-  # collapses every THEME[key] read to a single value, repainting the status
-  # bar one solid color. brew install bash brings 5.x onto PATH.
   local bash_major=${BASH_VERSINFO[0]:-0}
   if (( bash_major >= 4 )); then
     log "bash ${BASH_VERSION} ok"
     return
   fi
   if [[ "$(uname)" != "Darwin" ]] || ! command -v brew >/dev/null 2>&1; then
-    warn "bash ${BASH_VERSION} is < 4 and brew unavailable — install bash 4+ manually"
+    warn "bash ${BASH_VERSION} < 4 and brew unavailable — install bash 4+ manually"
     return
   fi
   if brew list bash >/dev/null 2>&1; then
@@ -83,9 +128,6 @@ install_fonts() {
 }
 
 ensure_global_gitignore() {
-  # tmux-resurrect's default save path uses ${RESURRECT_DIR:-...}; if a shell
-  # writes it unexpanded (e.g. inside a repo), git can stage a literal dir of
-  # that name. Add a global ignore so it can never be committed by accident.
   local ignore_file="${XDG_CONFIG_HOME:-$HOME/.config}/git/ignore"
   local pattern='${RESURRECT_DIR*'
   mkdir -p "$(dirname "$ignore_file")"
@@ -99,37 +141,25 @@ ensure_global_gitignore() {
 }
 
 setup_zsh_tmux() {
-  # Inject a per-project `tmux` wrapper into ~/.zshrc: bare `tmux` attaches or
-  # creates a session named after the cwd basename, with an isolated socket and
-  # tmux-resurrect dir per project.
   if ! command -v zsh >/dev/null 2>&1; then
     warn "zsh not found — skipping ~/.zshrc tmux helper"
     return
   fi
   local rc="$HOME/.zshrc"
-  local begin='# >>> tmux-city-blue per-project tmux >>>'
-  local end='# <<< tmux-city-blue per-project tmux <<<'
+  local begin='# >>> city-blue per-project tmux >>>'
+  local end='# <<< city-blue per-project tmux <<<'
+  local src_line="source \"$REPO_DIR/share/city-blue.zsh\""
   if [[ -f "$rc" ]] && grep -qF "$begin" "$rc"; then
     log "zsh tmux helper already present in $rc"
     return
   fi
   [[ -f "$rc" ]] || touch "$rc"
   cp "$rc" "${rc}.bak-${STAMP}"
-  cat >> "$rc" <<ZSH
-
-$begin
-tmux() {
-  if [ \$# -gt 0 ]; then
-    command tmux "\$@"
-    return
-  fi
-  local name="\${PWD##*/}"
-  local dir="\$HOME/.local/share/tmux/resurrect/\$name"
-  mkdir -p "\$dir"
-  RESURRECT_DIR="\$dir" command tmux -L "\$name" new-session -A -s "\$name"
-}
-$end
-ZSH
+  {
+    printf '\n%s\n' "$begin"
+    printf '%s\n' "$src_line"
+    printf '%s\n' "$end"
+  } >> "$rc"
   log "added tmux helper to $rc (backup: ${rc}.bak-${STAMP})"
 }
 
@@ -148,16 +178,34 @@ CFG
   log "wrote ghostty config -> $cfg"
 }
 
-ensure_bash4
-install_fonts
-ensure_global_gitignore
-setup_zsh_tmux
-setup_ghostty
+(( WITH_BASH ))      && ensure_bash4
+(( WITH_FONTS ))     && install_fonts
+(( WITH_GITIGNORE )) && ensure_global_gitignore
+(( WITH_ZSH ))       && setup_zsh_tmux
+(( WITH_GHOSTTY ))   && setup_ghostty
 
-log "generating themes/city-blue.conf via build.sh"
-bash "$REPO_DIR/build.sh"
+# ── Caveats for things we did NOT do ──────────────────────────────────────
 
-cat <<'EOF'
+(( WITH_ZSH )) || caveat "per-project tmux wrapper not installed.
+    To enable: add this line to your ~/.zshrc
+      source \"$REPO_DIR/share/city-blue.zsh\"
+    Or re-run: bash install.sh --with-zsh"
+
+(( WITH_GHOSTTY )) || caveat "Ghostty config not modified.
+    Recommended settings: see $REPO_DIR/share/ghostty.example.conf
+    Or re-run: bash install.sh --with-ghostty"
+
+(( WITH_FONTS )) || caveat "fonts not installed. Install a Nerd Font for glyphs:
+      brew install --cask font-jetbrains-mono-nerd-font font-sarabun
+    Or re-run: bash install.sh --with-fonts"
+
+if (( ! WITH_BASH )) && (( ${BASH_VERSINFO[0]:-0} < 4 )); then
+  caveat "bash ${BASH_VERSION} detected. Widgets need bash 4+:
+      brew install bash
+    Or re-run: bash install.sh --with-bash"
+fi
+
+cat <<EOF
 
 [install] done.
 
@@ -165,11 +213,10 @@ Next steps:
   1. Start or attach tmux:        tmux new -s main
   2. Reload config:               tmux source ~/.tmux.conf
   3. Install plugins (TPM):       press prefix + I  (default prefix: C-b)
-  4. Restart Ghostty so it picks up the new font config.
 
 Notes:
-  - Re-run `bash build.sh` after editing the palette or layout in build.sh.
-  - Tested on macOS. Some scripts use pbcopy / osascript / battery name
-    "InternalBattery-0" — adjust for Linux as needed.
+  - Re-run \`bash build.sh\` after editing the palette or layout in build.sh.
   - Status bar expects a Nerd Font for glyphs.
+  - For full setup including shell wrapper, fonts, Ghostty:
+      bash install.sh --full
 EOF

@@ -1,10 +1,10 @@
 #!/usr/bin/env bash
-# tmux-city-blue: save the current session as a NAMED snapshot, decoupled
+# city-blue: save the current session as a NAMED snapshot, decoupled
 # from the live session name so it can be loaded into any other session.
 #
 # Usage: snapshot_save.sh [name]
 # If no name is given, a timestamped one is generated.
-# Output: $XDG_DATA_HOME/tmux-city-blue/snapshots/<name>.tmux
+# Output: $XDG_DATA_HOME/city-blue/snapshots/<name>.tmux
 
 set -euo pipefail
 
@@ -20,11 +20,14 @@ if [ -z "$NAME" ]; then
   exit 1
 fi
 
-DATA_DIR="${XDG_DATA_HOME:-$HOME/.local/share}/tmux-city-blue/snapshots"
+_XDG="${XDG_DATA_HOME:-$HOME/.local/share}"
+DATA_DIR="$_XDG/city-blue/snapshots"
+_LEGACY="$_XDG/tmux-city-blue/snapshots"
+[ ! -d "$DATA_DIR" ] && [ -d "$_LEGACY" ] && { mkdir -p "$(dirname "$DATA_DIR")"; mv "$_LEGACY" "$DATA_DIR"; }
 mkdir -p "$DATA_DIR"
 
 OUT="$DATA_DIR/${NAME}.tmux"
-TMP="$(mktemp "${TMPDIR:-/tmp}/tmux-city-blue.XXXXXX")"
+TMP="$(mktemp "${TMPDIR:-/tmp}/city-blue.XXXXXX")"
 trap 'rm -f "$TMP"' EXIT
 
 SESSION=$(tmux display-message -p '#S')

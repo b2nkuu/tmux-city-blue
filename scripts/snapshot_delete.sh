@@ -1,10 +1,13 @@
 #!/usr/bin/env bash
-# tmux-city-blue: delete one or more saved snapshots via fzf popup.
+# city-blue: delete one or more saved snapshots via fzf popup.
 # Use Tab in fzf to multi-select before Enter.
 
 set -euo pipefail
 
-DATA_DIR="${XDG_DATA_HOME:-$HOME/.local/share}/tmux-city-blue/snapshots"
+_XDG="${XDG_DATA_HOME:-$HOME/.local/share}"
+DATA_DIR="$_XDG/city-blue/snapshots"
+_LEGACY="$_XDG/tmux-city-blue/snapshots"
+[ ! -d "$DATA_DIR" ] && [ -d "$_LEGACY" ] && { mkdir -p "$(dirname "$DATA_DIR")"; mv "$_LEGACY" "$DATA_DIR"; }
 
 shopt -s nullglob
 files=("$DATA_DIR"/*.tmux)
@@ -13,8 +16,8 @@ if [ ${#files[@]} -eq 0 ]; then
   exit 0
 fi
 
-LIST="$(mktemp "${TMPDIR:-/tmp}/tmux-city-blue.list.XXXXXX")"
-PICK="$(mktemp "${TMPDIR:-/tmp}/tmux-city-blue.pick.XXXXXX")"
+LIST="$(mktemp "${TMPDIR:-/tmp}/city-blue.list.XXXXXX")"
+PICK="$(mktemp "${TMPDIR:-/tmp}/city-blue.pick.XXXXXX")"
 trap 'rm -f "$LIST" "$PICK"' EXIT
 
 printf '%s\n' "${files[@]##*/}" | sed 's/\.tmux$//' > "$LIST"
