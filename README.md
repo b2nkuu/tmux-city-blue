@@ -72,8 +72,19 @@ of [janoamaral/tokyo-night-tmux](https://github.com/janoamaral/tokyo-night-tmux)
 ## Plugins (tpm)
 
 `tmux-sensible`, `tmux-yank`, `tmux-resurrect`, `tmux-continuum`, `tmux-cpu`,
-`tmux-battery`, `tmux-weather`, `tmux-open`, `extrakto`, `tmux-sessionx`,
-`tmux-floax`, `vim-tmux-navigator`.
+`tmux-battery`, `tmux-weather`, `tmux-open`, `tmux-fzf-url`, `extrakto`,
+`tmux-sessionx`, `tmux-floax`, `vim-tmux-navigator`.
+
+## Opening URLs
+
+Two ways:
+
+- **Shift + Cmd + Click** — Ghostty's built-in link handler. Shift bypasses
+  tmux's mouse capture so Cmd-modified clicks reach the terminal. Plain
+  `Cmd+Click` does not work while `set -g mouse on` because the click is
+  consumed by tmux before Ghostty sees the Cmd modifier.
+- **prefix + u** — `tmux-fzf-url` popup: scans the pane scrollback, fuzzy-pick
+  one or more URLs (`Tab` to multi-select), opens them in the default browser.
 
 ## Acknowledgments
 
@@ -96,6 +107,7 @@ this repo is just glue around their work.
 - [tmux-plugins/tmux-cpu](https://github.com/tmux-plugins/tmux-cpu) — cpu widget
 - [tmux-plugins/tmux-battery](https://github.com/tmux-plugins/tmux-battery) — battery widget
 - [tmux-plugins/tmux-open](https://github.com/tmux-plugins/tmux-open) — open files/URLs in copy-mode
+- [wfxr/tmux-fzf-url](https://github.com/wfxr/tmux-fzf-url) — fzf popup of URLs in pane
 - [xamut/tmux-weather](https://github.com/xamut/tmux-weather) — weather widget
 - [laktak/extrakto](https://github.com/laktak/extrakto) — fuzzy scrollback grab
 - [omerxx/tmux-sessionx](https://github.com/omerxx/tmux-sessionx) — fzf session switcher
