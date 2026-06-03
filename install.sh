@@ -13,6 +13,7 @@
 #   --with-fonts      brew install JetBrainsMono Nerd Font + Sarabun
 #   --with-bash       brew install bash 4+ if missing
 #   --with-gitignore  add resurrect pattern to global gitignore
+#   --with-gh-dash    install gh-dash (GitHub PR/issue TUI) via gh extension
 #   --full            all of the above
 #   --minimal         alias for the default (explicit)
 #   -h, --help        show this help
@@ -30,8 +31,9 @@ WITH_GHOSTTY=0
 WITH_FONTS=0
 WITH_BASH=0
 WITH_GITIGNORE=0
+WITH_GH_DASH=0
 
-usage() { sed -n '2,20p' "$0"; }
+usage() { sed -n '2,21p' "$0"; }
 
 while [[ $# -gt 0 ]]; do
   case "$1" in
@@ -40,8 +42,9 @@ while [[ $# -gt 0 ]]; do
     --with-fonts)     WITH_FONTS=1 ;;
     --with-bash)      WITH_BASH=1 ;;
     --with-gitignore) WITH_GITIGNORE=1 ;;
+    --with-gh-dash)   WITH_GH_DASH=1 ;;
     --full)
-      WITH_ZSH=1; WITH_GHOSTTY=1; WITH_FONTS=1; WITH_BASH=1; WITH_GITIGNORE=1 ;;
+      WITH_ZSH=1; WITH_GHOSTTY=1; WITH_FONTS=1; WITH_BASH=1; WITH_GITIGNORE=1; WITH_GH_DASH=1 ;;
     --minimal) ;;
     -h|--help) usage; exit 0 ;;
     *) printf 'unknown flag: %s\n' "$1" >&2; usage; exit 2 ;;
@@ -76,6 +79,7 @@ link "$REPO_DIR/tmux.conf" "$HOME/.tmux.conf"
 link "$REPO_DIR/conf.d"    "$HOME/.tmux/conf.d"
 link "$REPO_DIR/scripts"   "$HOME/.tmux/scripts"
 link "$REPO_DIR/themes"    "$HOME/.tmux/themes"
+link "$REPO_DIR/share"     "$HOME/.tmux/share"
 
 TPM_DIR="$HOME/.tmux/plugins/tpm"
 if [[ ! -d "$TPM_DIR" ]]; then
@@ -174,8 +178,24 @@ font-family = "Sarabun"
 font-size = 14
 font-feature = +liga
 font-feature = +calt
+
+# Required for tmux Alt/Meta bindings (e.g. inner tabs M-h/M-l).
+macos-option-as-alt = true
 CFG
   log "wrote ghostty config -> $cfg"
+}
+
+install_gh_dash() {
+  if ! command -v gh >/dev/null 2>&1; then
+    warn "gh-dash skipped — gh CLI not found (brew install gh)"
+    return
+  fi
+  if gh extension list 2>/dev/null | grep -q '^gh dash'; then
+    log "gh-dash already installed"
+  else
+    log "installing gh-dash (gh extension)"
+    gh extension install dlvhdr/gh-dash
+  fi
 }
 
 (( WITH_BASH ))      && ensure_bash4
@@ -183,6 +203,7 @@ CFG
 (( WITH_GITIGNORE )) && ensure_global_gitignore
 (( WITH_ZSH ))       && setup_zsh_tmux
 (( WITH_GHOSTTY ))   && setup_ghostty
+(( WITH_GH_DASH ))   && install_gh_dash
 
 # ── Caveats for things we did NOT do ──────────────────────────────────────
 
@@ -198,6 +219,10 @@ CFG
 (( WITH_FONTS )) || caveat "fonts not installed. Install a Nerd Font for glyphs:
       brew install --cask font-jetbrains-mono-nerd-font font-sarabun
     Or re-run: bash install.sh --with-fonts"
+
+(( WITH_GH_DASH )) || caveat "gh-dash not installed (GitHub PR/issue TUI):
+      gh extension install dlvhdr/gh-dash
+    Or re-run: bash install.sh --with-gh-dash"
 
 if (( ! WITH_BASH )) && (( ${BASH_VERSINFO[0]:-0} < 4 )); then
   caveat "bash ${BASH_VERSION} detected. Widgets need bash 4+:

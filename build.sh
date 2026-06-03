@@ -121,7 +121,7 @@ set -g pane-border-lines heavy
 set -g pane-border-style "fg=$BBLACK,bg=default"
 set -g pane-active-border-style "fg=$CYAN,bg=default,bold"
 set -g pane-border-status top
-set -g pane-border-format "#[fg=$BBLACK,bg=default]─#[fg=$FG,bg=default] #{?pane_active,#[fg=$CYAN]●,#[fg=$BBLACK]○} #P #[fg=$BLUE]#{pane_current_command} #[fg=$FG,dim]#{=/24/...:pane_title}#[nodim,fg=$BBLACK,bg=default]─"
+set -g pane-border-format "#[fg=$BBLACK,bg=default]─#[fg=$FG,bg=default] #{?pane_active,#[fg=$CYAN]●,#[fg=$BBLACK]○} #P #[fg=$BLUE]#{pane_current_command} #[fg=$FG,dim]#{=/24/...:pane_title}#[nodim] #[fg=$BBLACK,bg=default,dim]󰍽 right-click for menu #[nodim,fg=$BBLACK,bg=default]─"
 
 # ── Window list ──
 set -g window-status-separator ""

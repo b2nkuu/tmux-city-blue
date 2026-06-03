@@ -16,6 +16,11 @@ tmux() {
     return
   fi
 
+  if [ -n "$TMUX" ]; then
+    print -u2 "city-blue: already inside tmux; refusing to nest. Use 'command tmux' to override."
+    return 1
+  fi
+
   local root display id dir legacy
 
   root="$(git -C "$PWD" rev-parse --show-toplevel 2>/dev/null)"
